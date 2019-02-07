@@ -30,6 +30,21 @@ $(document).ready(function() {
     });
   
     database.ref().on("child_added", function(event) {
+      console.log(event.val());
+      var currentTime = moment();
+
+      //First train
+      var firstTrain = event.val().time;
+
+      //Difference in minutes between present time and next train
+      var difference = moment().diff(moment(minutesAway), "minutes");
+      var dif = difference % event.val().frequency;
+
+      var minutesLeft = event.val().frequency - dif;
+
+      var minutesAway = moment().add(minutesLeft, "minutes");
+      var nextArrival = moment(minutesAway).format("HH:mm");
+      console.log(moment(minutesAway).format("HH:mm"));
       $("#train-list").append(
         "<tr><td>" +
           event.val().name +
@@ -38,9 +53,9 @@ $(document).ready(function() {
           "</td><td>" +
           event.val().frequency +
           "</td><td>" +
-          event.val().nextArrival +
+          nextArrival +
           "</td><td>" +
-          event.val().minutesAway +
+          minutesAway +
           "</td></tr>"
       );
     });
